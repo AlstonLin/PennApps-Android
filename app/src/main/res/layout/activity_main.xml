@@ -57,11 +57,13 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:id="@+id/login"
+        android:onClick="clickLogin"
         android:layout_gravity="center" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign Up"
         android:id="@+id/sign_up"
+        android:onClick="clickSignUp"
         android:layout_gravity="center" />
 </LinearLayout>
