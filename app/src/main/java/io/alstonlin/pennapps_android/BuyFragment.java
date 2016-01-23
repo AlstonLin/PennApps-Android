@@ -2,6 +2,7 @@ package io.alstonlin.pennapps_android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,11 +41,10 @@ public class BuyFragment extends Fragment implements OnClickListener{
 
     @Override
     public void onClick(View v) {
-        LayoutInflater layoutInflater = (LayoutInflater)getActivity().getBaseContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupLayout = layoutInflater.inflate(R.layout.request_pop_up, null, false);
-        PopupWindow connectionListPopup = new PopupWindow(popupLayout, 300, 470, true);
-        connectionListPopup.showAtLocation(v, Gravity.NO_GRAVITY, 0, 0);
-
+        PopupWindow connectionListPopup = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+        connectionListPopup.showAtLocation(getActivity().findViewById(R.id.frame), Gravity.CENTER, 0, 0);
+        connectionListPopup.update(0, 0, connectionListPopup.getWidth(), connectionListPopup.getHeight());
     }
 }
