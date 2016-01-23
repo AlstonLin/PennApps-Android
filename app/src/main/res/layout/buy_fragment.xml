@@ -12,7 +12,6 @@
         android:textSize="25dp"
         android:id="@+id/new_request"
         android:layout_marginTop="50dp"
-        android:onClick="clickRequest"
         android:layout_gravity="center" />
 
     <TextView
