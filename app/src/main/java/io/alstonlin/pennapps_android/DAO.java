@@ -56,7 +56,7 @@ public class DAO {
     private int eventId;
     private String deviceId;
     private String token;
-
+    private String email;
     private DAO(){}
 
 
@@ -99,6 +99,15 @@ public class DAO {
         List<NameValuePair> nameValuePairs = new ArrayList<>(2);
         nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("password", password));
+        this.email = email;
+        task.execute(nameValuePairs);
+    }
+
+    public void getPosts(JSONRunnable after){
+        PostTask task = new PostTask(POSTS_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
         task.execute(nameValuePairs);
     }
 

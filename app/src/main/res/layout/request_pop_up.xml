@@ -83,6 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancel"
+        android:onClick="cancel"
         android:layout_marginLeft="150dp"
         android:id="@+id/cancel" />
     >
@@ -91,6 +92,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Request Item"
+        android:onClick="request"
         android:id="@+id/request_item" />
 
     </RelativeLayout>
