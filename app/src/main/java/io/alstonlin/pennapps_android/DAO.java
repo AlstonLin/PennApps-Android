@@ -1,7 +1,7 @@
 package io.alstonlin.pennapps_android;
 
 public class DAO {
-    // TODO: Add paths as constants here
+    public static final String SERVER_PATH = "insert some path here";
     private static DAO instance;
     private DAO(){
         // TODO: Add stuff to establish connections
