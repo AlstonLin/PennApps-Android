@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickLogin(View v){
         // TODO: Add some kind of Auth
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, AppActivity.class);
         startActivity(intent);
     }
 }
