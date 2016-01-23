@@ -4,6 +4,11 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,8 +24,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickLogin(View v){
-        // TODO: Add some kind of Auth
-        Intent intent = new Intent(this, AppActivity.class);
-        startActivity(intent);
+        JSONRunnable callback = new JSONRunnable() {
+            @Override
+            public void run(JSONObject json) {
+                try {
+                    if (json.getBoolean("res")) {
+                        Intent intent = new Intent(MainActivity.this, AppActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(MainActivity.this, json.getString("response"), Toast.LENGTH_LONG).show();
+                    }
+                } catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        };
+        String email = ((EditText)findViewById(R.id.email)).getText().toString();
+        String password = ((EditText)findViewById(R.id.password)).getText().toString();
+        DAO.getInstance().login(email, password, callback);
     }
 }

@@ -32,7 +32,6 @@ public class BuyFragment extends Fragment implements OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.buy_fragment, container, false);
-
         Button b = (Button) v.findViewById(R.id.new_request);
         b.setOnClickListener(this);
         return v;

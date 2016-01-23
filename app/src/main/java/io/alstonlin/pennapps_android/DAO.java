@@ -1,7 +1,6 @@
 package io.alstonlin.pennapps_android;
 
 import android.app.Activity;
-import android.content.Entity;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -9,12 +8,10 @@ import android.os.Environment;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -24,7 +21,6 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,7 +32,6 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -60,6 +55,7 @@ public class DAO {
     private Activity activity;
     private int eventId;
     private String deviceId;
+    private String token;
 
     private DAO(){}
 
@@ -87,6 +83,24 @@ public class DAO {
         task.execute(nameValuePairs);
     }
 
+    public void login(String email, String password, final JSONRunnable after){
+        JSONRunnable getToken = new JSONRunnable() {
+            @Override
+            public void run(JSONObject json) {
+                try {
+                    DAO.this.token = json.getString("token");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                after.run(json);
+            }
+        };
+        PostTask task = new PostTask(LOGIN_URL, getToken);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("password", password));
+        task.execute(nameValuePairs);
+    }
 
     /*
        ------------------- INTERNET METHODS -------------------------------------
@@ -122,9 +136,6 @@ public class DAO {
         entity.addPart("photo", cb);
         entity.addPart("eventID", new StringBody(Integer.toString(eventId)));
         entity.addPart("userID",  new StringBody(deviceId));
-
-        //HTTPPost post = new HTTPPost(POST_IMAGE_PATH);
-        //post.execute(entity);
     }
 
     private class uploadImage extends AsyncTask<String, Void, Void>{

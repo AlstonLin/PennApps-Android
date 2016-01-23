@@ -21,8 +21,8 @@ public class AppActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    SellFragment sellFragment;
-    BuyFragment buyFragment;
+    private SellFragment sellFragment;
+    private BuyFragment buyFragment;
 
 
     @Override
