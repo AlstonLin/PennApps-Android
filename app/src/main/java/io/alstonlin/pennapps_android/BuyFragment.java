@@ -24,4 +24,8 @@ public class BuyFragment extends Fragment{
         return inflater.inflate(R.layout.buy_fragment, container, false);
     }
 
+    public void clickRequest(View v) {
+
+    }
+
 }
