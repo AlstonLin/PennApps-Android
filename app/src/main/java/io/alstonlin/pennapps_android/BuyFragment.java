@@ -58,6 +58,24 @@ public class BuyFragment extends Fragment {
                 connectionListPopup = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
                 connectionListPopup.showAtLocation(getActivity().findViewById(R.id.frame), Gravity.CENTER, 0, 0);
                 connectionListPopup.update(0, 0, connectionListPopup.getWidth(), connectionListPopup.getHeight());
+                setupPopupButtons(popupLayout);
+            }
+        });
+    }
+
+    private void setupPopupButtons(View v){
+        Button cancel = (Button) v.findViewById(R.id.cancel);
+        Button request = (Button) v.findViewById(R.id.request_item);
+        cancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connectionListPopup.dismiss();
+            }
+        });
+        request.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connectionListPopup.dismiss();
             }
         });
     }
