@@ -2,6 +2,7 @@ package io.alstonlin.pennapps_android;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -27,10 +28,6 @@ import org.json.JSONObject;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +76,7 @@ public class BuyFragment extends Fragment {
 
     private void setupButtons(View v) {
         Button newReq = (Button) v.findViewById(R.id.new_request);
+        //Button picture = (Button) v.findViewById(R.id.picture);
         final Button refresh = (Button) v.findViewById(R.id.refresh);
         newReq.setOnClickListener(new OnClickListener() {
             @Override
@@ -97,7 +95,6 @@ public class BuyFragment extends Fragment {
 
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
-                googleMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
                 setupPopupButtons(popupLayout);
 
             }
@@ -271,7 +268,7 @@ public class BuyFragment extends Fragment {
             }
             ((TextView)view.findViewById(R.id.name)).setText(requests.get(i).getName());
             ((TextView)view.findViewById(R.id.location)).setText(requests.get(i).getLocation());
-            ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(requests.get(i).getFee()));
+            ((TextView)view.findViewById(R.id.fee)).setText("$" + Double.toString(requests.get(i).getFee()));
             String location = requests.get(i).getLocation();
 
             final Request req = requests.get(i);
@@ -312,6 +309,14 @@ public class BuyFragment extends Fragment {
                                                 refreshRequest(req, adapter);
                                             }
                                         });
+                                    }
+                                });
+                                Button back = (Button) getActivity().findViewById(R.id.back);
+                                back.setOnClickListener(new OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(getActivity(), AppActivity.class);
+                                        startActivity(intent);
                                     }
                                 });
                             } catch (JSONException e) {

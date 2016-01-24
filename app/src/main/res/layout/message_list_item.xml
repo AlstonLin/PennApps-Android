@@ -9,11 +9,14 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Name"
+        android:gravity="center"
         android:id="@+id/name"
+        android:textColor="#004D40"
         android:textSize="20dp"
         android:layout_weight="0.05" />
     <TextView
-        android:layout_width="366dp"
+        android:layout_width="match_parent"
+        android:gravity="center"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Content"

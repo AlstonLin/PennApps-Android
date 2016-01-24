@@ -8,24 +8,25 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1.35"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="45dp"
         android:text="Sign Up"
-        android:textColor="@color/black"
+        android:textColor="#004D40"
         android:layout_marginTop="20dp"
-        android:textSize="40sp"
-        android:layout_gravity="center_horizontal"
+        android:textSize="42sp"
         android:id="@+id/textView" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center"
-        android:layout_weight="1">
+        android:orientation="vertical"
+        android:layout_weight="5">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
+            android:layout_gravity="center"
             android:textColor="@color/black"
             android:textSize="18sp" />
 
@@ -33,38 +34,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:layout_gravity="center"
             android:ems="10"
             android:id="@+id/name" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:layout_weight="1">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Email"
+            android:layout_gravity="center"
             android:textColor="@color/black"
             android:textSize="18sp" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:inputType="textEmailAddress"
             android:ems="10"
             android:id="@+id/email" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:layout_weight="1">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="Password"
             android:textColor="@color/black"
             android:textSize="18sp" />
@@ -72,52 +65,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:layout_gravity="center"
             android:ems="10"
             android:id="@+id/password" />
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:layout_weight="1">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Confirm Password"
             android:textColor="@color/black"
+            android:layout_gravity="center"
             android:textSize="18sp" />
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/confirm" />
-
     </LinearLayout>
-
-    <LinearLayout
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:layout_weight="2"
-        android:weightSum="1">
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="Sign Up"
-            android:id="@+id/sign_up"
-            android:onClick="clickSignUp"
-            android:layout_weight="0.44"
-            android:textSize="20dp" />
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:id="@+id/cancel"
-            android:onClick="clickCancel"
-            android:layout_gravity="center"
-            android:textSize="20dp" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:text="Sign Up"
+        android:background="#009688"
+        android:id="@+id/sign_up"
+        android:onClick="clickSignUp"
+        android:layout_marginBottom="5dp"
+        android:layout_gravity="center"
+        android:textSize="20dp" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:background="#009688"
+        android:id="@+id/cancel"
+        android:onClick="clickCancel"
+        android:layout_gravity="center"
+        android:textSize="20dp" />
 </LinearLayout>

@@ -2,6 +2,7 @@ package io.alstonlin.pennapps_android;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -41,9 +43,9 @@ import java.util.ArrayList;
 public class SellFragment extends Fragment {
 
     private GoogleMap googleMap;
+    private PopupWindow pw;
 
     public SellFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -192,7 +194,7 @@ public class SellFragment extends Fragment {
             }
             ((TextView)view.findViewById(R.id.name)).setText(requests.get(i).getName());
             ((TextView)view.findViewById(R.id.location)).setText(requests.get(i).getLocation());
-            ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(requests.get(i).getFee()));
+            ((TextView)view.findViewById(R.id.fee)).setText("$" + Double.toString(requests.get(i).getFee()));
             final Request req = requests.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -204,6 +206,7 @@ public class SellFragment extends Fragment {
                                 ArrayList<Message> messages = getMessages(json);
                                 final MessageListAdapter adapter = new MessageListAdapter(req, messages);
                                 getActivity().setContentView(R.layout.buy_message);
+
                                 ListView lv = (ListView) getActivity().findViewById(R.id.list);
                                 lv.setAdapter(adapter);
 
@@ -226,6 +229,14 @@ public class SellFragment extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         refreshRequest(req, adapter);
+                                    }
+                                });
+                                Button back = (Button) getActivity().findViewById(R.id.back);
+                                back.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(getActivity(), AppActivity.class);
+                                        startActivity(intent);
                                     }
                                 });
                             } catch (JSONException e) {
@@ -291,7 +302,7 @@ public class SellFragment extends Fragment {
                 e.printStackTrace();
             }
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            Marker TP = googleMap.addMarker(new MarkerOptions().
+             Marker TP = googleMap.addMarker(new MarkerOptions().
                     position(new LatLng(latitude, longitude)).title("Location"));
             return view;
         }

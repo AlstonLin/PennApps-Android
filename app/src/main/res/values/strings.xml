@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">favors</string>
+    <string name="app_name">Favors</string>
     <string name="title_activity_sign_up">SignUp</string>
     <string name="title_activity_app">AppActivity</string>
     <string name="action_settings">Settings</string>
