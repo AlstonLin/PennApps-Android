@@ -59,7 +59,6 @@ public class DAO {
     private String email;
     private DAO(){}
 
-
     /**
      * Use this to get the Singleton of DAO; instantiate() must be called first before calling this!
      *
@@ -121,6 +120,35 @@ public class DAO {
         nameValuePairs.add(new BasicNameValuePair("name", name));
         nameValuePairs.add(new BasicNameValuePair("location", location));
         nameValuePairs.add(new BasicNameValuePair("fee", Double.toString(fee)));
+        task.execute(nameValuePairs);
+    }
+
+    public void newChat(String email, String requestID, String responderID, String posterID, JSONRunnable after) {
+        PostTask task = new PostTask(NEW_CHAT_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(5);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
+        nameValuePairs.add(new BasicNameValuePair("request_id", requestID));
+        nameValuePairs.add(new BasicNameValuePair("responder_id", responderID));
+        nameValuePairs.add(new BasicNameValuePair("poster_id", posterID));
+        task.execute(nameValuePairs);
+    }
+
+    public void newMessage(String email, String chatID, String content, JSONRunnable after) {
+        PostTask task = new PostTask(NEW_MESSAGE_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(4);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
+        nameValuePairs.add(new BasicNameValuePair("chat_id", chatID));
+        nameValuePairs.add(new BasicNameValuePair("content", content));
+        task.execute(nameValuePairs);
+    }
+
+    public void postChats(String index, JSONRunnable after) {
+        PostTask task = new PostTask(NEW_MESSAGE_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(4);
+        nameValuePairs.add(new BasicNameValuePair("index", index));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
         task.execute(nameValuePairs);
     }
 
