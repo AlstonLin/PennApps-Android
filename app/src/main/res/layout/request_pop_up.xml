@@ -12,20 +12,23 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:background="@android:color/holo_blue_light"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="60dp"
         android:layout_weight="1">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text="Chore Description"
             android:textSize="18sp" />
 
         <EditText
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
+            android:layout_height="140dp"
+            android:inputType="textMultiLine"
             android:ems="10"
-            android:id="@+id/name" />
+            android:singleLine="false"
+            android:maxLines="3"
+            android:id="@+id/chore_desc"
+            android:text=" " />
     </LinearLayout>
 
     <LinearLayout
@@ -34,7 +37,7 @@
         android:background="@android:color/holo_blue_light"
         android:gravity="center"
         android:layout_weight="1"
-        android:layout_marginTop="60dp">
+        android:layout_marginTop="30dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,7 +50,8 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
-            android:id="@+id/location" />
+            android:id="@+id/location"
+            android:text=" " />
     </LinearLayout>
 
     <LinearLayout
@@ -55,7 +59,7 @@
         android:layout_height="0dp"
         android:background="@android:color/holo_blue_light"
         android:gravity="center"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="30dp"
         android:layout_weight="1">
 
         <TextView
@@ -68,7 +72,8 @@
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:ems="5"
-            android:id="@+id/fee" />
+            android:id="@+id/fee"
+            android:text="0" />
 
     </LinearLayout>
 
@@ -77,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop = "60dp"   >
+        android:layout_marginTop = "30dp"   >
 
     <Button
         android:layout_width="wrap_content"

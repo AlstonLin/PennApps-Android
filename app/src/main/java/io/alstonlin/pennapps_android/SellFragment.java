@@ -7,8 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -27,7 +32,37 @@ public class SellFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.sell_fragment, container, false);
+        View v = inflater.inflate(R.layout.sell_fragment, container, false);
+        setupList(v);
+        return v;
+    }
+
+    private void setupList(View v){
+        final ListView list = (ListView) v.findViewById(R.id.list);
+        // TODO: Edit this so it will get only tasks
+
+        DAO.getInstance().getPosts(new JSONRunnable() {
+            @Override
+            public void run(JSONObject json) {
+                try {
+                    ArrayList<Request> requests = getRequests(json);
+                    list.setAdapter(new SellListAdapter(requests));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private ArrayList<Request> getRequests(JSONObject json) throws JSONException{
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Request> requests = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = (JSONObject) array.get(i);
+            Request r = new Request(obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
+            requests.add(r);
+        }
+        return requests;
     }
 
     private class SellListAdapter extends BaseAdapter {

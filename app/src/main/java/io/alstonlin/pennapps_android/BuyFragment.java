@@ -95,7 +95,7 @@ public class BuyFragment extends Fragment {
         request.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View btn) {
-                String name = ((EditText)v.findViewById(R.id.name)).getText().toString();
+                String name = ((EditText)v.findViewById(R.id.chore_desc)).getText().toString();
                 String location = ((EditText)v.findViewById(R.id.location)).getText().toString();
                 String fee = ((EditText)v.findViewById(R.id.fee)).getText().toString();
                 DAO.getInstance().newRequest(name, location, Double.parseDouble(fee), new JSONRunnable() {
