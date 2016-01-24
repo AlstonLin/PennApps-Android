@@ -44,8 +44,8 @@ public class AppActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new BuyFragment(), "BUY");
-        adapter.addFragment(new SellFragment(), "SELL");
+        adapter.addFragment(new BuyFragment(), "Others");
+        adapter.addFragment(new SellFragment(), "Yours");
         viewPager.setAdapter(adapter);
     }
 
