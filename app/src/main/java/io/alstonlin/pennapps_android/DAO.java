@@ -171,7 +171,7 @@ public class DAO {
     /*
      *  ------------------------ General Internet Methods -------------------------------
      */
-    private void sendImage(Bitmap item) throws JSONException, UnsupportedEncodingException {
+    public void postImage(Bitmap item) throws JSONException, UnsupportedEncodingException {
         MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
         Random rand = new Random();
