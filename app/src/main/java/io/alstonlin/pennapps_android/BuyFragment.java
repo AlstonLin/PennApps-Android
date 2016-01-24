@@ -1,7 +1,12 @@
 package io.alstonlin.pennapps_android;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,11 +25,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class BuyFragment extends Fragment {
 
     private PopupWindow connectionListPopup;
+
+    private double latitude;
+    private double longitude;
+    private GoogleMap googleMap;
+
 
     public BuyFragment() {
         // Required empty public constructor
@@ -44,7 +61,7 @@ public class BuyFragment extends Fragment {
     }
 
 
-    private void setupButtons(View v){
+    private void setupButtons(View v) {
         Button newReq = (Button) v.findViewById(R.id.new_request);
         Button refresh = (Button) v.findViewById(R.id.refresh);
         newReq.setOnClickListener(new OnClickListener() {
@@ -55,7 +72,18 @@ public class BuyFragment extends Fragment {
                 connectionListPopup = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
                 connectionListPopup.showAtLocation(getActivity().findViewById(R.id.frame), Gravity.CENTER, 0, 0);
                 connectionListPopup.update(0, 0, connectionListPopup.getWidth(), connectionListPopup.getHeight());
+                LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+                Location location = getLastKnownLocation();
+                if (location == null) {
+                    Toast.makeText(getActivity(), "Please Enable Location", Toast.LENGTH_LONG).show();
+                }
+
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                googleMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
                 setupPopupButtons(popupLayout);
+
             }
         });
         refresh.setOnClickListener(new OnClickListener() {
@@ -78,6 +106,27 @@ public class BuyFragment extends Fragment {
         });
     }
 
+    private Location getLastKnownLocation() {
+        LocationManager mLocationManager = (LocationManager) getActivity().getApplicationContext().getSystemService(getActivity().LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return null;
+            }
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
+
     private void setupPopupButtons(final View v){
         Button cancel = (Button) v.findViewById(R.id.cancel);
         Button request = (Button) v.findViewById(R.id.request_item);
@@ -91,7 +140,7 @@ public class BuyFragment extends Fragment {
             @Override
             public void onClick(View btn) {
                 String name = ((EditText)v.findViewById(R.id.chore_desc)).getText().toString();
-                String location = ((EditText)v.findViewById(R.id.location)).getText().toString();
+                String location = longitude + " " + latitude;
                 String fee = ((EditText)v.findViewById(R.id.fee)).getText().toString();
                 DAO.getInstance().newRequest(name, location, Double.parseDouble(fee), new JSONRunnable() {
                     @Override

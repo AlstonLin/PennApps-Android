@@ -1,8 +1,15 @@
 package io.alstonlin.pennapps_android;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +19,27 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SellFragment extends Fragment{
+public class SellFragment extends Fragment {
+
+    private GoogleMap googleMap;
+
 
     public SellFragment() {
         // Required empty public constructor
@@ -34,7 +55,8 @@ public class SellFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.sell_fragment, container, false);
-        setupList(v);
+        MapsInitializer.initialize(getActivity());
+        //setupList(v);
         return v;
     }
 
@@ -126,6 +148,24 @@ public class SellFragment extends Fragment{
             ((TextView)view.findViewById(R.id.name)).setText(requests.get(i).getName());
             ((TextView)view.findViewById(R.id.location)).setText(requests.get(i).getLocation());
             ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(requests.get(i).getFee()));
+            String location = requests.get(i).getLocation();
+            double latitude = 0;
+            double longitude = 0;
+                int firstNumberEndIndex = location.indexOf(" ");
+                latitude = Double.parseDouble(location.substring(0, firstNumberEndIndex));
+                longitude = Double.parseDouble(location.substring(firstNumberEndIndex + 1));
+            try {
+                if (googleMap == null) {
+                    googleMap = ((MapFragment) getActivity().getFragmentManager().
+                            findFragmentById(R.id.map)).getMap();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                Marker TP = googleMap.addMarker(new MarkerOptions().
+                        position(new LatLng(latitude, longitude)).title("Location"));
             final Request req = requests.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
