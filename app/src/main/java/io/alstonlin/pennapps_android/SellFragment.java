@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,15 +40,40 @@ public class SellFragment extends Fragment{
     }
 
     private void setupList(View v){
-        final ListView list = (ListView) v.findViewById(R.id.list);
+        final ListView list = (ListView) v.findViewById(R.id.sell_list);
         // TODO: Edit this so it will get only tasks
 
-        DAO.getInstance().getPosts(new JSONRunnable() {
+        DAO.getInstance().getRequests(new JSONRunnable() {
             @Override
             public void run(JSONObject json) {
                 try {
                     ArrayList<Request> requests = getRequests(json);
                     list.setAdapter(new SellListAdapter(requests));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Button refresh = (Button) getActivity().findViewById(R.id.refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SellListAdapter adapter = (SellListAdapter) ((ListView)getActivity().findViewById(R.id.sell_list)).getAdapter();
+                refresh(adapter);
+            }
+        });
+
+    }
+
+    private void refresh(final SellListAdapter adapter){
+        DAO.getInstance().getRequests(new JSONRunnable() {
+            @Override
+            public void run(JSONObject json) {
+                try {
+                    ArrayList<Request> requests = getRequests(json);
+                    adapter.setRequests(requests);
+                    adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -93,6 +119,22 @@ public class SellFragment extends Fragment{
         return messages;
     }
 
+    private void refreshRequest(Request req, final MessageListAdapter adapter){
+        DAO.getInstance().getRequestMessages(req, new JSONRunnable() {
+            @Override
+            public void run(JSONObject json) {
+                try {
+                    ArrayList<Message> messages = getMessages(json);
+                    adapter.setMessages(messages);
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
     private class SellListAdapter extends BaseAdapter {
 
         public ArrayList<Request> requests;
@@ -115,6 +157,10 @@ public class SellFragment extends Fragment{
         @Override
         public long getItemId(int i) {
             return 0;
+        }
+
+        public void setRequests(ArrayList<Request> requests){
+            this.requests = requests;
         }
 
         @Override
@@ -149,7 +195,8 @@ public class SellFragment extends Fragment{
                                         DAO.getInstance().newMessage(req.getId(), content.getText().toString(), new JSONRunnable() {
                                             @Override
                                             public void run(JSONObject json) {
-                                                System.out.println(json);
+                                                content.setText("");
+                                                refreshRequest(req, adapter);
                                             }
                                         });
                                     }
@@ -157,19 +204,7 @@ public class SellFragment extends Fragment{
                                 refresh.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        DAO.getInstance().getRequestMessages(req, new JSONRunnable() {
-                                            @Override
-                                            public void run(JSONObject json) {
-                                                try {
-                                                    ArrayList<Message> messages = getMessages(json);
-                                                    adapter.setMessages(messages);
-                                                    adapter.notifyDataSetChanged();
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                            }
-                                        });
+                                        refreshRequest(req, adapter);
                                     }
                                 });
                             } catch (JSONException e) {

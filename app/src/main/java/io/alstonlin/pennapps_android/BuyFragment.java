@@ -43,10 +43,24 @@ public class BuyFragment extends Fragment {
         return v;
     }
 
+    private void refresh(final BuyListAdapter adapter){
+        DAO.getInstance().getPosts(new JSONRunnable() {
+            @Override
+            public void run(JSONObject json) {
+                try {
+                    ArrayList<Request> requests = getRequests(json);
+                    adapter.setRequests(requests);
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     private void setupButtons(View v){
         Button newReq = (Button) v.findViewById(R.id.new_request);
-        Button refresh = (Button) v.findViewById(R.id.refresh);
+        final Button refresh = (Button) v.findViewById(R.id.refresh);
         newReq.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,19 +75,8 @@ public class BuyFragment extends Fragment {
         refresh.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final BuyListAdapter adapter = (BuyListAdapter) ((ListView) getActivity().findViewById(R.id.list)).getAdapter();
-                DAO.getInstance().getPosts(new JSONRunnable() {
-                    @Override
-                    public void run(JSONObject json) {
-                        try {
-                            ArrayList<Request> requests = getRequests(json);
-                            adapter.setPosts(requests);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                final BuyListAdapter adapter = (BuyListAdapter) ((ListView) getActivity().findViewById(R.id.buy_list)).getAdapter();
+                refresh(adapter);
             }
         });
     }
@@ -99,6 +102,8 @@ public class BuyFragment extends Fragment {
                         try {
                             if (json.getBoolean("res")) {
                                 connectionListPopup.dismiss();
+                                final BuyListAdapter adapter = (BuyListAdapter) ((ListView) getActivity().findViewById(R.id.buy_list)).getAdapter();
+                                refresh(adapter);
                             }
                             Toast.makeText(getActivity(), json.getString("response"), Toast.LENGTH_LONG);
                         } catch (JSONException e) {
@@ -111,7 +116,7 @@ public class BuyFragment extends Fragment {
     }
 
     private void setupList(View v){
-        final ListView list = (ListView) v.findViewById(R.id.list);
+        final ListView list = (ListView) v.findViewById(R.id.buy_list);
         DAO.getInstance().getPosts(new JSONRunnable() {
             @Override
             public void run(JSONObject json) {
@@ -153,22 +158,49 @@ public class BuyFragment extends Fragment {
         return requests;
     }
 
+    private ArrayList<Message> getMessages(JSONObject json) throws JSONException {
+        ArrayList<Message> messages = new ArrayList<Message>();
+        JSONArray array = json.getJSONArray("result");
+        for (int i = 0; i < array.length(); i++){
+            JSONObject obj = array.getJSONObject(i);
+            messages.add(new Message(obj.getString("from"), obj.getString("content"), null));
+        }
+        return messages;
+    }
+
+    private void refreshRequest(Request req, final MessageListAdapter adapter){
+        DAO.getInstance().getRequestMessages(req, new JSONRunnable() {
+            @Override
+            public void run(JSONObject json) {
+                try {
+                    ArrayList<Message> messages = getMessages(json);
+                    adapter.setMessages(messages);
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
     private class BuyListAdapter extends BaseAdapter {
-        public ArrayList<Request> posts;
+
+        public ArrayList<Request> requests;
 
         public BuyListAdapter(ArrayList<Request> posts){
             super();
-            this.posts = posts;
+            this.requests = posts;
         }
 
         @Override
         public int getCount() {
-            return posts.size();
+            return requests.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return posts.get(i);
+            return requests.get(i);
         }
 
         @Override
@@ -176,59 +208,88 @@ public class BuyFragment extends Fragment {
             return 0;
         }
 
+        public void setRequests(ArrayList<Request> requests){
+            this.requests = requests;
+        }
+
         @Override
-        public View getView(final int i, View view, final ViewGroup viewGroup) {
+        public View getView(final int i, View view, ViewGroup viewGroup) {
             if (view == null) {
                 LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = vi.inflate(R.layout.request_list_item, viewGroup, false);
             }
-            ((TextView)view.findViewById(R.id.name)).setText(posts.get(i).getName());
-            ((TextView)view.findViewById(R.id.location)).setText(posts.get(i).getLocation());
-            ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(posts.get(i).getFee()));
-            final Request post = posts.get(i);
+            ((TextView)view.findViewById(R.id.name)).setText(requests.get(i).getName());
+            ((TextView)view.findViewById(R.id.location)).setText(requests.get(i).getLocation());
+            ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(requests.get(i).getFee()));
+            final Request req = requests.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    DAO.getInstance().getChats(posts.get(i), new JSONRunnable() {
+                    DAO.getInstance().getRequestMessages(req, new JSONRunnable() {
                         @Override
                         public void run(JSONObject json) {
                             try {
-                                ArrayList<Chat> chats = getChats(post, json);
-                                getActivity().setContentView(R.layout.buy_chats_list);
-                                ChatListAdapter adapter = new ChatListAdapter(chats);
+                                ArrayList<Message> messages = getMessages(json);
+                                final MessageListAdapter adapter = new MessageListAdapter(messages);
+                                getActivity().setContentView(R.layout.buy_message);
                                 ListView lv = (ListView) getActivity().findViewById(R.id.list);
                                 lv.setAdapter(adapter);
+
+                                Button send = (Button) getActivity().findViewById(R.id.send);
+                                Button refresh = (Button) getActivity().findViewById(R.id.refresh);
+                                final EditText content = (EditText) getActivity().findViewById(R.id.content);
+                                send.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DAO.getInstance().newMessage(req.getId(), content.getText().toString(), new JSONRunnable() {
+                                            @Override
+                                            public void run(JSONObject json) {
+                                                content.setText("");
+                                                refreshRequest(req, adapter);
+                                            }
+                                        });
+                                    }
+                                });
+                                refresh.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DAO.getInstance().getRequestMessages(req, new JSONRunnable() {
+                                            @Override
+                                            public void run(JSONObject json) {
+                                                refreshRequest(req, adapter);
+                                            }
+                                        });
+                                    }
+                                });
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+
                         }
                     });
                 }
             });
             return view;
         }
-
-        public void setPosts(ArrayList<Request> posts) {
-            this.posts = posts;
-        }
     }
 
-    private class ChatListAdapter extends BaseAdapter {
-        public ArrayList<Chat> chats;
+    private class MessageListAdapter extends BaseAdapter {
 
-        public ChatListAdapter(ArrayList<Chat> chats){
+        private ArrayList<Message> messages;
+
+        public MessageListAdapter(ArrayList<Message> posts){
             super();
-            this.chats = chats;
+            this.messages = posts;
         }
 
         @Override
         public int getCount() {
-            return chats.size();
+            return messages.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return chats.get(i);
+            return messages.get(i);
         }
 
         @Override
@@ -237,23 +298,17 @@ public class BuyFragment extends Fragment {
         }
 
         @Override
-        public View getView(final int i, View view, final ViewGroup viewGroup) {
+        public View getView(final int i, View view, ViewGroup viewGroup) {
             if (view == null) {
                 LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = vi.inflate(R.layout.message_list_item, viewGroup, false);
             }
-            ((TextView)view.findViewById(R.id.name)).setText(chats.get(i).getPosterName());
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getActivity().setContentView(R.layout.buy_message);
-                }
-            });
+            ((TextView)view.findViewById(R.id.name)).setText(messages.get(i).getFrom());
+            ((TextView)view.findViewById(R.id.content)).setText(messages.get(i).getContent());
             return view;
         }
-
-        public void setChats(ArrayList<Chat> chats) {
-            this.chats = chats;
+        public void setMessages(ArrayList<Message> messages){
+            this.messages = messages;
         }
     }
 }
