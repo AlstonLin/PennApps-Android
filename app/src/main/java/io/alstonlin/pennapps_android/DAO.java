@@ -44,8 +44,7 @@ public class DAO {
     private static String REQUESTS_URL = "/requests";
     private static String NEW_REQUEST_URL = "/new_request";
     private static String NEW_CHAT_URL = "/new_chat";
-    private static String POST_CHATS_URL = "/post_chats";
-    private static String REQUEST_CHATS_URL = "/request_chats";
+    private static String CHATS_URL = "/request_messages";
     private static String POSTS_URL = "/posts";
     private static String NEW_MESSAGE_URL = "/new_msg";
     private static DAO instance;
@@ -131,42 +130,43 @@ public class DAO {
         task.execute(nameValuePairs);
     }
 
-    public void newChat(String requestID, String responderID, String posterID, JSONRunnable after) {
+    public void newChat(String requestID, JSONRunnable after) {
         PostTask task = new PostTask(NEW_CHAT_URL, after);
         List<NameValuePair> nameValuePairs = new ArrayList<>(5);
         nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("token", token));
         nameValuePairs.add(new BasicNameValuePair("request_id", requestID));
-        nameValuePairs.add(new BasicNameValuePair("responder_id", responderID));
-        nameValuePairs.add(new BasicNameValuePair("poster_id", posterID));
         task.execute(nameValuePairs);
     }
 
-    public void newMessage(String chatID, String content, JSONRunnable after) {
+    public void newMessage(String reqID, String content, JSONRunnable after) {
         PostTask task = new PostTask(NEW_MESSAGE_URL, after);
         List<NameValuePair> nameValuePairs = new ArrayList<>(4);
         nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("token", token));
-        nameValuePairs.add(new BasicNameValuePair("chat_id", chatID));
+        nameValuePairs.add(new BasicNameValuePair("req_id", reqID));
         nameValuePairs.add(new BasicNameValuePair("content", content));
         task.execute(nameValuePairs);
     }
 
-    public void postChats(String index, JSONRunnable after) {
-        PostTask task = new PostTask(POST_CHATS_URL, after);
-        List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+    public void getChats(Request request, JSONRunnable after) {
+        PostTask task = new PostTask(CHATS_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(3);
         nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("token", token));
+        nameValuePairs.add(new BasicNameValuePair("request_id", request.getId()));
         task.execute(nameValuePairs);
     }
 
-    public void requestChats(String index, JSONRunnable after) {
-        PostTask task = new PostTask(REQUEST_CHATS_URL, after);
-        List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+    public void getRequestMessages(Request request, JSONRunnable after) {
+        PostTask task = new PostTask(CHATS_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(3);
         nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("token", token));
+        nameValuePairs.add(new BasicNameValuePair("request_id", request.getId()));
         task.execute(nameValuePairs);
     }
+
 
     /*
      *  ------------------------ General Internet Methods -------------------------------

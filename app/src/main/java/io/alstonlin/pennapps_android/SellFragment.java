@@ -7,9 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,29 +60,56 @@ public class SellFragment extends Fragment{
         ArrayList<Request> requests = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = (JSONObject) array.get(i);
-            Request r = new Request(obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
+            Request r = new Request(obj.getString("_id"), obj.getString("owner"), obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
             requests.add(r);
         }
         return requests;
     }
 
+    private ArrayList<Chat> getChats(Request request, JSONObject json) throws JSONException{
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Chat> chats = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = (JSONObject) array.get(i);
+            JSONArray messages = obj.getJSONArray("messages");
+            ArrayList<Message> messageList = new ArrayList<>();
+            Chat chat = new Chat(obj.getString("_id"), null, obj.getString("poster"), obj.getString("responder"), obj.getString("poster_name"), obj.getString("responder_name"), request);
+            for (int j = 0; j < messages.length(); j++){
+                JSONObject o = messages.getJSONObject(j);
+                messageList.add(new Message(o.getString("from"), o.getString("content"), chat));
+            }
+            chats.add(chat);
+        }
+        return chats;
+    }
+
+    private ArrayList<Message> getMessages(JSONObject json) throws JSONException {
+        ArrayList<Message> messages = new ArrayList<Message>();
+        JSONArray array = json.getJSONArray("result");
+        for (int i = 0; i < array.length(); i++){
+            JSONObject obj = array.getJSONObject(i);
+            messages.add(new Message(obj.getString("from"), obj.getString("content"), null));
+        }
+        return messages;
+    }
+
     private class SellListAdapter extends BaseAdapter {
 
-        public ArrayList<Request> posts;
+        public ArrayList<Request> requests;
 
         public SellListAdapter(ArrayList<Request> posts){
             super();
-            this.posts = posts;
+            this.requests = posts;
         }
 
         @Override
         public int getCount() {
-            return posts.size();
+            return requests.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return posts.get(i);
+            return requests.get(i);
         }
 
         @Override
@@ -95,18 +123,103 @@ public class SellFragment extends Fragment{
                 LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = vi.inflate(R.layout.request_list_item, viewGroup, false);
             }
-            ((TextView)view.findViewById(R.id.name)).setText(posts.get(i).getName());
-            ((TextView)view.findViewById(R.id.location)).setText(posts.get(i).getLocation());
-            ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(posts.get(i).getFee()));
-
+            ((TextView)view.findViewById(R.id.name)).setText(requests.get(i).getName());
+            ((TextView)view.findViewById(R.id.location)).setText(requests.get(i).getLocation());
+            ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(requests.get(i).getFee()));
+            final Request req = requests.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    DAO.getInstance().getRequestMessages(req, new JSONRunnable() {
+                        @Override
+                        public void run(JSONObject json) {
+                            try {
+                                ArrayList<Message> messages = getMessages(json);
+                                final MessageListAdapter adapter = new MessageListAdapter(messages);
+                                getActivity().setContentView(R.layout.buy_message);
+                                ListView lv = (ListView) getActivity().findViewById(R.id.list);
+                                lv.setAdapter(adapter);
 
-                    getActivity().setContentView(view);
+                                Button send = (Button) getActivity().findViewById(R.id.send);
+                                Button refresh = (Button) getActivity().findViewById(R.id.refresh);
+                                final EditText content = (EditText) getActivity().findViewById(R.id.content);
+                                send.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DAO.getInstance().newMessage(req.getId(), content.getText().toString(), new JSONRunnable() {
+                                            @Override
+                                            public void run(JSONObject json) {
+                                                System.out.println(json);
+                                            }
+                                        });
+                                    }
+                                });
+                                refresh.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DAO.getInstance().getRequestMessages(req, new JSONRunnable() {
+                                            @Override
+                                            public void run(JSONObject json) {
+                                                try {
+                                                    ArrayList<Message> messages = getMessages(json);
+                                                    adapter.setMessages(messages);
+                                                    adapter.notifyDataSetChanged();
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                            }
+                                        });
+                                    }
+                                });
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
                 }
             });
             return view;
+        }
+    }
+
+    private class MessageListAdapter extends BaseAdapter {
+
+        private ArrayList<Message> messages;
+
+        public MessageListAdapter(ArrayList<Message> posts){
+            super();
+            this.messages = posts;
+        }
+
+        @Override
+        public int getCount() {
+            return messages.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return messages.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int i, View view, ViewGroup viewGroup) {
+            if (view == null) {
+                LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = vi.inflate(R.layout.message_list_item, viewGroup, false);
+            }
+            ((TextView)view.findViewById(R.id.name)).setText(messages.get(i).getFrom());
+            ((TextView)view.findViewById(R.id.content)).setText(messages.get(i).getContent());
+            return view;
+        }
+        public void setMessages(ArrayList<Message> messages){
+            this.messages = messages;
         }
     }
 }

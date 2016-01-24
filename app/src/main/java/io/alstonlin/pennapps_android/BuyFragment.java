@@ -1,9 +1,6 @@
 package io.alstonlin.pennapps_android;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -12,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.view.View.OnClickListener;
@@ -66,7 +61,7 @@ public class BuyFragment extends Fragment {
         refresh.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final BuyListAdapter adapter = (BuyListAdapter)((ListView) getActivity().findViewById(R.id.list)).getAdapter();
+                final BuyListAdapter adapter = (BuyListAdapter) ((ListView) getActivity().findViewById(R.id.list)).getAdapter();
                 DAO.getInstance().getPosts(new JSONRunnable() {
                     @Override
                     public void run(JSONObject json) {
@@ -130,18 +125,35 @@ public class BuyFragment extends Fragment {
         });
     }
 
+    private ArrayList<Chat> getChats(Request request, JSONObject json) throws JSONException{
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Chat> chats = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = (JSONObject) array.get(i);
+            JSONArray messages = obj.getJSONArray("messages");
+            ArrayList<Message> messageList = new ArrayList<>();
+            Chat chat = new Chat(obj.getString("_id"), null, obj.getString("poster"), obj.getString("responder"), obj.getString("poster_name"), obj.getString("responder_name"), request);
+            for (int j = 0; j < messages.length(); j++){
+                JSONObject o = messages.getJSONObject(j);
+                messageList.add(new Message(o.getString("from"), o.getString("content"), chat));
+            }
+            chats.add(chat);
+        }
+        return chats;
+    }
+
     private ArrayList<Request> getRequests(JSONObject json) throws JSONException{
         JSONArray array = json.getJSONArray("result");
         ArrayList<Request> requests = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = (JSONObject) array.get(i);
-            Request r = new Request(obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
+            Request r = new Request(obj.getString("_id"), obj.getString("owner"), obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
             requests.add(r);
         }
         return requests;
     }
-    private class BuyListAdapter extends BaseAdapter {
 
+    private class BuyListAdapter extends BaseAdapter {
         public ArrayList<Request> posts;
 
         public BuyListAdapter(ArrayList<Request> posts){
@@ -173,7 +185,64 @@ public class BuyFragment extends Fragment {
             ((TextView)view.findViewById(R.id.name)).setText(posts.get(i).getName());
             ((TextView)view.findViewById(R.id.location)).setText(posts.get(i).getLocation());
             ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(posts.get(i).getFee()));
+            final Request post = posts.get(i);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DAO.getInstance().getChats(posts.get(i), new JSONRunnable() {
+                        @Override
+                        public void run(JSONObject json) {
+                            try {
+                                ArrayList<Chat> chats = getChats(post, json);
+                                getActivity().setContentView(R.layout.buy_chats_list);
+                                ChatListAdapter adapter = new ChatListAdapter(chats);
+                                ListView lv = (ListView) getActivity().findViewById(R.id.list);
+                                lv.setAdapter(adapter);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+            return view;
+        }
 
+        public void setPosts(ArrayList<Request> posts) {
+            this.posts = posts;
+        }
+    }
+
+    private class ChatListAdapter extends BaseAdapter {
+        public ArrayList<Chat> chats;
+
+        public ChatListAdapter(ArrayList<Chat> chats){
+            super();
+            this.chats = chats;
+        }
+
+        @Override
+        public int getCount() {
+            return chats.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return chats.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int i, View view, final ViewGroup viewGroup) {
+            if (view == null) {
+                LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = vi.inflate(R.layout.message_list_item, viewGroup, false);
+            }
+            ((TextView)view.findViewById(R.id.name)).setText(chats.get(i).getPosterName());
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -183,8 +252,8 @@ public class BuyFragment extends Fragment {
             return view;
         }
 
-        public void setPosts(ArrayList<Request> posts) {
-            this.posts = posts;
+        public void setChats(ArrayList<Chat> chats) {
+            this.chats = chats;
         }
     }
 }

@@ -15,30 +15,16 @@ public class Chat {
     private ArrayList<Message> messages;
     private String posterId;
     private String responderId;
+    private String posterName;
+    private String responderName;
     private Request request;
 
-    public Chat(String id, ArrayList<Message> messages, String posterId, String responderId, Request request) {
+    public Chat(String id, ArrayList<Message> messages, String posterId, String responderId, String posterName, String responderName, Request request) {
         this.id = id;
         this.messages = messages;
         this.posterId = posterId;
         this.responderId = responderId;
         this.request = request;
-    }
-
-
-    public void publish(final Context context){
-        DAO.getInstance().newChat(request.getId(), responderId, posterId, new JSONRunnable() {
-            @Override
-            public void run(JSONObject json) {
-                try {
-                    if (!json.getBoolean("res")) {
-                        Toast.makeText(context, "There was an error while publishing", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     public String getId() {
@@ -57,8 +43,19 @@ public class Chat {
         return responderId;
     }
 
+    public String getPosterName() {
+        return posterName;
+    }
+
+    public String getResponderName() {
+        return responderName;
+    }
+
     public Request getRequest() {
         return request;
     }
 
+    public void setMessages(ArrayList<Message> messages) {
+        this.messages = messages;
+    }
 }
