@@ -19,8 +19,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0af05984-9b3e-4807-9f48-0b3eb463c13e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/buy_message.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/buy_message.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PennApps-Android.iws" />
@@ -2319,7 +2317,13 @@
       <option name="project" value="LOCAL" />
       <updated>1453594758322</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Added app name to string">
+      <created>1453597000393</created>
+      <option name="number" value="00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1453597000393</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -2377,7 +2381,8 @@
     <MESSAGE value="Added Activities and Views layouts" />
     <MESSAGE value="sell_item_list made" />
     <MESSAGE value="buying and selling message layouts made" />
-    <option name="LAST_COMMIT_MESSAGE" value="buying and selling message layouts made" />
+    <MESSAGE value="Added app name to string" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added app name to string" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
