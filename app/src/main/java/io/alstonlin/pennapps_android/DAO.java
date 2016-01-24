@@ -123,7 +123,7 @@ public class DAO {
         task.execute(nameValuePairs);
     }
 
-    public void newChat(String email, String requestID, String responderID, String posterID, JSONRunnable after) {
+    public void newChat(String requestID, String responderID, String posterID, JSONRunnable after) {
         PostTask task = new PostTask(NEW_CHAT_URL, after);
         List<NameValuePair> nameValuePairs = new ArrayList<>(5);
         nameValuePairs.add(new BasicNameValuePair("email", email));
@@ -134,7 +134,7 @@ public class DAO {
         task.execute(nameValuePairs);
     }
 
-    public void newMessage(String email, String chatID, String content, JSONRunnable after) {
+    public void newMessage(String chatID, String content, JSONRunnable after) {
         PostTask task = new PostTask(NEW_MESSAGE_URL, after);
         List<NameValuePair> nameValuePairs = new ArrayList<>(4);
         nameValuePairs.add(new BasicNameValuePair("email", email));
