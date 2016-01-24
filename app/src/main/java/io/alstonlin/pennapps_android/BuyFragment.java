@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -50,6 +51,7 @@ public class BuyFragment extends Fragment {
 
     private void setupButtons(View v){
         Button newReq = (Button) v.findViewById(R.id.new_request);
+        Button refresh = (Button) v.findViewById(R.id.refresh);
         newReq.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,9 +63,27 @@ public class BuyFragment extends Fragment {
                 setupPopupButtons(popupLayout);
             }
         });
+        refresh.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final BuyListAdapter adapter = (BuyListAdapter)((ListView) getActivity().findViewById(R.id.list)).getAdapter();
+                DAO.getInstance().getPosts(new JSONRunnable() {
+                    @Override
+                    public void run(JSONObject json) {
+                        try {
+                            ArrayList<Request> requests = getRequests(json);
+                            adapter.setPosts(requests);
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
 
-    private void setupPopupButtons(View v){
+    private void setupPopupButtons(final View v){
         Button cancel = (Button) v.findViewById(R.id.cancel);
         Button request = (Button) v.findViewById(R.id.request_item);
         cancel.setOnClickListener(new OnClickListener() {
@@ -74,8 +94,23 @@ public class BuyFragment extends Fragment {
         });
         request.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                connectionListPopup.dismiss();
+            public void onClick(View btn) {
+                String name = ((EditText)v.findViewById(R.id.name)).getText().toString();
+                String location = ((EditText)v.findViewById(R.id.location)).getText().toString();
+                String fee = ((EditText)v.findViewById(R.id.fee)).getText().toString();
+                DAO.getInstance().newRequest(name, location, Double.parseDouble(fee), new JSONRunnable() {
+                    @Override
+                    public void run(JSONObject json) {
+                        try {
+                            if (json.getBoolean("res")) {
+                                connectionListPopup.dismiss();
+                            }
+                            Toast.makeText(getActivity(), json.getString("response"), Toast.LENGTH_LONG);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }
@@ -86,13 +121,7 @@ public class BuyFragment extends Fragment {
             @Override
             public void run(JSONObject json) {
                 try {
-                    JSONArray array = json.getJSONArray("result");
-                    ArrayList<Request> requests = new ArrayList<Request>();
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject obj = (JSONObject) array.get(i);
-                        Request r = new Request(obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
-                        requests.add(r);
-                    }
+                    ArrayList<Request> requests = getRequests(json);
                     list.setAdapter(new BuyListAdapter(requests));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -101,6 +130,16 @@ public class BuyFragment extends Fragment {
         });
     }
 
+    private ArrayList<Request> getRequests(JSONObject json) throws JSONException{
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Request> requests = new ArrayList<Request>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = (JSONObject) array.get(i);
+            Request r = new Request(obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
+            requests.add(r);
+        }
+        return requests;
+    }
     private class BuyListAdapter extends BaseAdapter {
 
         public ArrayList<Request> posts;
@@ -143,6 +182,10 @@ public class BuyFragment extends Fragment {
                 }
             });
             return view;
+        }
+
+        public void setPosts(ArrayList<Request> posts) {
+            this.posts = posts;
         }
     }
 }

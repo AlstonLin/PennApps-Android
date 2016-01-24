@@ -73,7 +73,9 @@ public class DAO {
     }
 
 
-
+    /*
+     * -------------------- RESTful Interface ----------------------------------
+     */
     public void signUp(String name, String email, String password, JSONRunnable after) throws JSONException, IOException {
         PostTask task = new PostTask(REGISTER_URL, after);
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
@@ -111,8 +113,19 @@ public class DAO {
         task.execute(nameValuePairs);
     }
 
+    public void newRequest(String name, String location, double fee, JSONRunnable after){
+        PostTask task = new PostTask(NEW_REQUEST_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(5);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
+        nameValuePairs.add(new BasicNameValuePair("name", name));
+        nameValuePairs.add(new BasicNameValuePair("location", location));
+        nameValuePairs.add(new BasicNameValuePair("fee", Double.toString(fee)));
+        task.execute(nameValuePairs);
+    }
+
     /*
-       ------------------- INTERNET METHODS -------------------------------------
+     *  ------------------------ General Internet Methods -------------------------------
      */
     private void sendImage(Bitmap item) throws JSONException, UnsupportedEncodingException {
         MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
