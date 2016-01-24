@@ -25,4 +25,5 @@
         android:text="Fee"
         android:id="@+id/fee"
         android:layout_gravity="center_horizontal" />
+
 </LinearLayout>

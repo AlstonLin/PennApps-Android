@@ -42,7 +42,6 @@ public class SellFragment extends Fragment {
 
     private GoogleMap googleMap;
 
-
     public SellFragment() {
         // Required empty public constructor
     }
@@ -56,13 +55,8 @@ public class SellFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = null;
-        try {
-            v = inflater.inflate(R.layout.sell_fragment, container, false);
-            MapsInitializer.initialize(getActivity());
-            setupList(v);
-        } catch (InflateException e) {
-            e.printStackTrace();
-        }
+        v = inflater.inflate(R.layout.sell_fragment, container, false);
+        setupList(v);
         return v;
     }
 
@@ -199,24 +193,6 @@ public class SellFragment extends Fragment {
             ((TextView)view.findViewById(R.id.name)).setText(requests.get(i).getName());
             ((TextView)view.findViewById(R.id.location)).setText(requests.get(i).getLocation());
             ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(requests.get(i).getFee()));
-            String location = requests.get(i).getLocation();
-            double latitude = 0;
-            double longitude = 0;
-                int firstNumberEndIndex = location.indexOf(" ");
-                latitude = Double.parseDouble(location.substring(0, firstNumberEndIndex));
-                longitude = Double.parseDouble(location.substring(firstNumberEndIndex + 1));
-            try {
-                if (googleMap == null) {
-                    googleMap = ((MapFragment) getActivity().getFragmentManager().
-                            findFragmentById(R.id.map)).getMap();
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                Marker TP = googleMap.addMarker(new MarkerOptions().
-                        position(new LatLng(latitude, longitude)).title("Location"));
             final Request req = requests.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -226,7 +202,7 @@ public class SellFragment extends Fragment {
                         public void run(JSONObject json) {
                             try {
                                 ArrayList<Message> messages = getMessages(json);
-                                final MessageListAdapter adapter = new MessageListAdapter(messages);
+                                final MessageListAdapter adapter = new MessageListAdapter(req, messages);
                                 getActivity().setContentView(R.layout.buy_message);
                                 ListView lv = (ListView) getActivity().findViewById(R.id.list);
                                 lv.setAdapter(adapter);
@@ -265,11 +241,12 @@ public class SellFragment extends Fragment {
     }
 
     private class MessageListAdapter extends BaseAdapter {
-
+        private Request request;
         private ArrayList<Message> messages;
 
-        public MessageListAdapter(ArrayList<Message> posts){
+        public MessageListAdapter(Request request, ArrayList<Message> posts){
             super();
+            this.request = request;
             this.messages = posts;
         }
 
@@ -296,6 +273,26 @@ public class SellFragment extends Fragment {
             }
             ((TextView)view.findViewById(R.id.name)).setText(messages.get(i).getFrom());
             ((TextView)view.findViewById(R.id.content)).setText(messages.get(i).getContent());
+            MapsInitializer.initialize(getActivity());
+            String location = request.getLocation();
+            double latitude = 0;
+            double longitude = 0;
+            location = location.trim();
+            int firstNumberEndIndex = location.indexOf(' ');
+            latitude = Double.parseDouble(location.substring(0, firstNumberEndIndex));
+            longitude = Double.parseDouble(location.substring(firstNumberEndIndex + 1));
+                try {
+                if (googleMap == null) {
+                    googleMap = ((MapFragment) getActivity().getFragmentManager().
+                            findFragmentById(R.id.map)).getMap();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            Marker TP = googleMap.addMarker(new MarkerOptions().
+                    position(new LatLng(latitude, longitude)).title("Location"));
             return view;
         }
         public void setMessages(ArrayList<Message> messages){

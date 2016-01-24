@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -56,6 +57,7 @@ public class BuyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.buy_fragment, container, false);
         setupButtons(v);
+
         setupList(v);
         return v;
     }
@@ -270,6 +272,8 @@ public class BuyFragment extends Fragment {
             ((TextView)view.findViewById(R.id.name)).setText(requests.get(i).getName());
             ((TextView)view.findViewById(R.id.location)).setText(requests.get(i).getLocation());
             ((TextView)view.findViewById(R.id.fee)).setText(Double.toString(requests.get(i).getFee()));
+            String location = requests.get(i).getLocation();
+
             final Request req = requests.get(i);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -279,7 +283,7 @@ public class BuyFragment extends Fragment {
                         public void run(JSONObject json) {
                             try {
                                 ArrayList<Message> messages = getMessages(json);
-                                final MessageListAdapter adapter = new MessageListAdapter(messages);
+                                final MessageListAdapter adapter = new MessageListAdapter(messages, req);
                                 getActivity().setContentView(R.layout.buy_message);
                                 ListView lv = (ListView) getActivity().findViewById(R.id.list);
                                 lv.setAdapter(adapter);
@@ -325,10 +329,12 @@ public class BuyFragment extends Fragment {
     private class MessageListAdapter extends BaseAdapter {
 
         private ArrayList<Message> messages;
+        private Request request;
 
-        public MessageListAdapter(ArrayList<Message> posts){
+        public MessageListAdapter(ArrayList<Message> posts, Request request){
             super();
             this.messages = posts;
+            this.request = request;
         }
 
         @Override
@@ -354,6 +360,26 @@ public class BuyFragment extends Fragment {
             }
             ((TextView)view.findViewById(R.id.name)).setText(messages.get(i).getFrom());
             ((TextView)view.findViewById(R.id.content)).setText(messages.get(i).getContent());
+            MapsInitializer.initialize(getActivity());
+            String location = request.getName();
+            double latitude = 0;
+            double longitude = 0;
+            location = location.trim();
+            int firstNumberEndIndex = location.indexOf(' ');
+            latitude = Double.parseDouble(location.substring(0, firstNumberEndIndex));
+            longitude = Double.parseDouble(location.substring(firstNumberEndIndex + 1));
+            try {
+                if (googleMap == null) {
+                    googleMap = ((MapFragment) getActivity().getFragmentManager().
+                            findFragmentById(R.id.map)).getMap();
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            Marker TP = googleMap.addMarker(new MarkerOptions().
+                    position(new LatLng(latitude, longitude)).title("Location"));
             return view;
         }
         public void setMessages(ArrayList<Message> messages){

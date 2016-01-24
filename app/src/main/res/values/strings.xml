@@ -4,7 +4,7 @@
     <string name="title_activity_app">AppActivity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
-
+    <string name="google_app_id">secure-petal-120008</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

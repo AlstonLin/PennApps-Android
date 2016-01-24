@@ -1,45 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="2"/>
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="374dp"
+        android:layout_height="0dp"
+        android:layout_weight="3"
         android:id="@+id/list"
         android:layout_gravity="top"
-        android:layout_weight="0.61"
         android:layout_marginBottom="20dp"
         android:layout_above="@+id/editText"
         android:layout_alignParentTop="true" />
 
-    <EditText
-        android:layout_width="272dp"
-        android:layout_height="50dp"
-        android:id="@+id/content"
-        android:layout_weight="0.21"
-        android:background="@color/secondary_text_material_light"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
-    <Button
-        android:layout_width="74dp"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/send"
-        android:layout_gravity="right"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/editText"
-        android:layout_alignTop="@+id/editText" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <EditText
+            android:layout_width="272dp"
+            android:layout_height="50dp"
+            android:id="@+id/content"
+            android:layout_weight="0.21"
+            android:background="@color/secondary_text_material_light"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true" />
+        <Button
+            android:layout_width="74dp"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:id="@+id/send"
+            android:layout_gravity="right"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/editText"
+            android:layout_alignTop="@+id/editText" />
 
-    <Button
-        android:layout_width="74dp"
-        android:layout_height="wrap_content"
-        android:text="Refresh"
-        android:id="@+id/refresh"
-        android:layout_gravity="right"
-        android:layout_below="@+id/send"
-        android:layout_alignStart="@+id/send"
-        android:layout_marginTop="22dp" />
-
-</RelativeLayout>
+        <Button
+            android:layout_width="74dp"
+            android:layout_height="wrap_content"
+            android:text="Refresh"
+            android:id="@+id/refresh"
+            android:layout_gravity="right"
+            android:layout_below="@+id/send"
+            android:layout_alignStart="@+id/send"
+            android:layout_marginTop="22dp" />
+    </LinearLayout>
+</LinearLayout>
