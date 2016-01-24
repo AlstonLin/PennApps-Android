@@ -10,9 +10,8 @@
         android:id="@+id/listView"
         android:layout_gravity="top"
         android:layout_weight="0.61"
-        android:layout_marginBottom="20dp"
-        android:layout_above="@+id/editText"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/editText" />
 
     <EditText
         android:layout_width="272dp"
@@ -21,15 +20,16 @@
         android:layout_weight="0.21"
         android:background="@color/secondary_text_material_light"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
     <Button
-        android:layout_width="74dp"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:text="Send"
         android:id="@+id/send"
         android:layout_gravity="right"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/editText"
-        android:layout_alignTop="@+id/editText" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp" />
 
 </RelativeLayout>

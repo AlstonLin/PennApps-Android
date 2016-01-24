@@ -10,11 +10,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Name"
         android:id="@+id/name"
-        android:layout_marginTop="191dp"
+        android:textSize="20dp"
         android:layout_alignParentTop="true"
-        android:textSize="30dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="32dp" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,21 +21,20 @@
         android:text="Fee"
         android:layout_marginRight="30dp"
         android:id="@+id/textView3"
-        android:textSize="30dp"
+        android:textSize="20dp"
         android:gravity="right"
-        android:layout_alignTop="@+id/name"
-        android:layout_alignEnd="@+id/name"
-        android:layout_marginEnd="39dp" />
+        android:layout_marginEnd="96dp"
+        android:layout_below="@+id/name"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
+        android:textSize="20dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Location"
         android:id="@+id/textView4"
-        android:layout_below="@+id/name"
-        android:layout_alignStart="@+id/name" />
+        android:layout_below="@+id/name" />
 
     <fragment
         android:id="@+id/map"
