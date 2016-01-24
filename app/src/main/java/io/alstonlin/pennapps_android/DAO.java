@@ -112,6 +112,14 @@ public class DAO {
         task.execute(nameValuePairs);
     }
 
+    public void getRequests(JSONRunnable after){
+        PostTask task = new PostTask(REQUESTS_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
+        task.execute(nameValuePairs);
+    }
+
     public void newRequest(String name, String location, double fee, JSONRunnable after){
         PostTask task = new PostTask(NEW_REQUEST_URL, after);
         List<NameValuePair> nameValuePairs = new ArrayList<>(5);
@@ -145,9 +153,17 @@ public class DAO {
     }
 
     public void postChats(String index, JSONRunnable after) {
-        PostTask task = new PostTask(NEW_MESSAGE_URL, after);
-        List<NameValuePair> nameValuePairs = new ArrayList<>(4);
-        nameValuePairs.add(new BasicNameValuePair("index", index));
+        PostTask task = new PostTask(POST_CHATS_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
+        nameValuePairs.add(new BasicNameValuePair("token", token));
+        task.execute(nameValuePairs);
+    }
+
+    public void requestChats(String index, JSONRunnable after) {
+        PostTask task = new PostTask(REQUEST_CHATS_URL, after);
+        List<NameValuePair> nameValuePairs = new ArrayList<>(2);
+        nameValuePairs.add(new BasicNameValuePair("email", email));
         nameValuePairs.add(new BasicNameValuePair("token", token));
         task.execute(nameValuePairs);
     }
