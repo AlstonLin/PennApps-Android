@@ -67,8 +67,8 @@ public class SellFragment extends Fragment{
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: Make this change
-                    Toast.makeText(getActivity(), "TODO: FINISH THIS", Toast.LENGTH_SHORT).show();
+
+                    getActivity().setContentView(view);
                 }
             });
             return view;
