@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="374dp"
+        android:id="@+id/listView"
+        android:layout_gravity="top"
+        android:layout_weight="0.61"
+        android:layout_marginBottom="20dp"
+        android:layout_above="@+id/editText" />
+
+    <EditText
+        android:layout_width="272dp"
+        android:layout_height="50dp"
+        android:id="@+id/editText"
+        android:layout_weight="0.21"
+        android:background="@color/secondary_text_material_light"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+    <Button
+        android:layout_width="74dp"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:id="@+id/send"
+        android:layout_gravity="right"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/editText"
+        android:layout_alignTop="@+id/editText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Claim Code: ####"
+        android:id="@+id/claim_code"
+        android:textSize="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/listView"
+        android:layout_alignEnd="@+id/send" />
+
+
+</RelativeLayout>
