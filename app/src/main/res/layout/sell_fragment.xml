@@ -3,18 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="io.alstonlin.pennapps_android.SellFragment">
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    tools:context="io.alstonlin.pennapps_android.SellFragment"
+    android:weightSum="1">
 
     <ListView
         android:layout_width="match_parent"
+        android:layout_height="395dp"
+        android:id="@+id/sell_list"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.85" />
+
+    <Button
+        android:layout_width="380dp"
         android:layout_height="wrap_content"
-        android:id="@+id/list"
-        android:layout_gravity="center_horizontal" />
+        android:text="Refresh"
+        android:id="@+id/refresh"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20dp" />
 
 </LinearLayout>
