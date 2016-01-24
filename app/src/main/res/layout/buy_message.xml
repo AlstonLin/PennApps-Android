@@ -43,5 +43,4 @@
         android:layout_above="@+id/listView"
         android:layout_alignEnd="@+id/send" />
 
-
 </RelativeLayout>
