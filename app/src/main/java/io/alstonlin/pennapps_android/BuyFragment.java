@@ -360,26 +360,6 @@ public class BuyFragment extends Fragment {
             }
             ((TextView)view.findViewById(R.id.name)).setText(messages.get(i).getFrom());
             ((TextView)view.findViewById(R.id.content)).setText(messages.get(i).getContent());
-            MapsInitializer.initialize(getActivity());
-            String location = request.getName();
-            double latitude = 0;
-            double longitude = 0;
-            location = location.trim();
-            int firstNumberEndIndex = location.indexOf(' ');
-            latitude = Double.parseDouble(location.substring(0, firstNumberEndIndex));
-            longitude = Double.parseDouble(location.substring(firstNumberEndIndex + 1));
-            try {
-                if (googleMap == null) {
-                    googleMap = ((MapFragment) getActivity().getFragmentManager().
-                            findFragmentById(R.id.map)).getMap();
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            Marker TP = googleMap.addMarker(new MarkerOptions().
-                    position(new LatLng(latitude, longitude)).title("Location"));
             return view;
         }
         public void setMessages(ArrayList<Message> messages){
