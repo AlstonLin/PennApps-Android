@@ -132,7 +132,7 @@ public class BuyFragment extends Fragment {
 
     private ArrayList<Request> getRequests(JSONObject json) throws JSONException{
         JSONArray array = json.getJSONArray("result");
-        ArrayList<Request> requests = new ArrayList<Request>();
+        ArrayList<Request> requests = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             JSONObject obj = (JSONObject) array.get(i);
             Request r = new Request(obj.getString("name"), obj.getString("location"), obj.getDouble("fee"));
@@ -165,7 +165,7 @@ public class BuyFragment extends Fragment {
         }
 
         @Override
-        public View getView(final int i, View view, ViewGroup viewGroup) {
+        public View getView(final int i, View view, final ViewGroup viewGroup) {
             if (view == null) {
                 LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = vi.inflate(R.layout.request_list_item, viewGroup, false);
@@ -177,8 +177,7 @@ public class BuyFragment extends Fragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: Make this change
-                    Toast.makeText(getActivity(), "TODO: FINISH THIS", Toast.LENGTH_SHORT).show();
+                    getActivity().setContentView(R.layout.buy_message);
                 }
             });
             return view;
